@@ -6,14 +6,11 @@ let mousedowns = Rx.Observable.fromEvent(document, 'mousedown')
 
 let mousedrags = mousedowns.flatMap(x => {
   return mousemoves.map(y => {
-    y.preventDefault()
-
-    // TODO: handle all cases of rectangle creation. don't assume first click always top-left corner.
     return {
-      left: x.pageX,
-      top: x.pageY,
-      width: y.pageX - x.pageX,
-      height: y.pageY - x.pageY
+      left: Math.min(x.pageX, y.pageX),
+      top: Math.min(x.pageY, y.pageY),
+      width: Math.abs(y.pageX - x.pageX),
+      height: Math.abs(y.pageY - x.pageY)
     }
   }).takeUntil(mouseups)
 })
