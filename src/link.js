@@ -17,6 +17,7 @@ mousedowns.subscribe(_ => {
   el.id = "rect"
   el.style.position = "absolute"
   el.style.border = "1px dotted lightblue"
+  el.style.zIndex = "9999"
   document.body.appendChild(el)
 })
 
