@@ -54,9 +54,13 @@ mouseups.subscribe(_ => {
   let el = document.querySelector("#rect")
   if (!el) return
 
-  let as = [...document.querySelectorAll('a')]
+  let overlappedLinks = Rx.Observable.from([...document.querySelectorAll('a')])
     .filter(a => overlaps(el, a))
-    .map(a => window.open(a))
+    .map(a => a.href)
+    .distinct()
+
+  overlappedLinks.subscribe(a => window.open(a))
+  overlappedLinks.subscribe(a => console.log(a))
 
   el.remove()
 })
