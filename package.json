@@ -1,13 +1,14 @@
 {
   "name": "link",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Open all links under selected area in new window",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "beefy src/link.js 8080 --live",
+    "clean": "rm browserified.js",
+    "build": "browserify src/link.js -o browserified.js",
+    "test": "echo after npm start, open test.html in your browser"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "rxjs": "^5.0.0-beta.8"
   }
