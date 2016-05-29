@@ -59,14 +59,8 @@ let overlappedLinks = mousedrags.merge(mousedowns).concatMap(e => {
   return Rx.Observable.of(as)
 })
 
-// remember the last overlappedLinks
-let overlappedLinksPairs = overlappedLinks.scan((acc, cur, _, __) => {
-  let prev = acc.cur
-  return {prev, cur}
-}, {prev:[], cur:[]})
-
-overlappedLinksPairs.subscribe(e => {
-  let {prev, cur} = e
+overlappedLinks.pairwise().subscribe(e => {
+  let [prev, cur] = e
   prev.forEach(el => el.style.border = "")
   cur.forEach(el => el.style.border = "2px solid red")
 })
