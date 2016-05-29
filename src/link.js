@@ -15,8 +15,6 @@ let mousedrags = mousedowns.flatMap(x => {
   }).takeUntil(mouseups)
 })
 
-mousedrags.subscribe(e => console.log(e))
-
 // create and append rectangle
 mousedowns.subscribe(_ => {
   let el = document.createElement('div')
@@ -36,6 +34,13 @@ mousedrags.subscribe(e => {
   el.style.height = e.height + "px"
 })
 
+// remove rectangle
+mouseups.subscribe(_ => {
+  let el = document.querySelector("#rect")
+  if (!el) return
+  el.remove()
+})
+
 let overlaps = (el1, el2) => {
   let rect1 = el1.getBoundingClientRect()
     , rect2 = el2.getBoundingClientRect()
@@ -47,20 +52,29 @@ let overlaps = (el1, el2) => {
     return left < right && top < bottom
 }
 
-// remove rectangle
-mouseups.subscribe(_ => {
+// merging mousedowns as click without drag should also refresh the links
+let overlappedLinks = mousedrags.merge(mousedowns).concatMap(e => {
   let el = document.querySelector("#rect")
-  if (!el) return
-
-  let overlappedLinks = Rx.Observable.from([...document.querySelectorAll('a')])
-    .filter(a => overlaps(el, a))
-    .map(a => a.href)
-    .distinct()
-
-  overlappedLinks.subscribe(a => window.open(a))
-  overlappedLinks.subscribe(a => console.log(a))
-
-  el.remove()
+  let as = el ? [...document.querySelectorAll('a')].filter(a => overlaps(el, a)) : []
+  return Rx.Observable.of(as)
 })
+
+// remember the last overlappedLinks
+let overlappedLinksPairs = overlappedLinks.scan((acc, cur, _, __) => {
+  let prev = acc.cur
+  return {prev, cur}
+}, {prev:[], cur:[]})
+
+overlappedLinksPairs.subscribe(e => {
+  let {prev, cur} = e
+  prev.forEach(el => el.style.border = "")
+  cur.forEach(el => el.style.border = "2px solid red")
+})
+
+mouseups.withLatestFrom(overlappedLinks, (_, as) => as)
+  .mergeAll()
+  .map(a => a.href)
+  .distinct() // using distinct here will prevent same url being opened twice throughout
+  .subscribe(url => window.open(url))
 
 console.log("loaded");
