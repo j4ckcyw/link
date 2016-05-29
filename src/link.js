@@ -8,6 +8,7 @@ let mousedrags = mousedowns.flatMap(x => {
   return mousemoves.map(y => {
     y.preventDefault()
 
+    // TODO: handle all cases of rectangle creation. don't assume first click always top-left corner.
     return {
       left: x.pageX,
       top: x.pageY,
