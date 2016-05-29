@@ -4,9 +4,13 @@
   "description": "Open all links under selected area in new window",
   "scripts": {
     "start": "beefy src/link.js 8080 --live",
-    "clean": "rm browserified.js",
-    "build": "browserify src/link.js -o browserified.js",
-    "test": "echo after npm start, open test.html in your browser"
+    "test": "open http://localhost:8080/test.html",
+
+    "build": "npm run build:browserify && npm run build:greasemonkey",
+    "build:browserify": "browserify src/link.js -o link.browserified.js",
+    "build:greasemonkey": "cat header.txt link.browserified.js > link.user.js",
+
+    "clean": "rm link.browserified.js link.user.js"
   },
   "license": "MIT",
   "devDependencies": {

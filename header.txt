@@ -1,0 +1,6 @@
+// ==UserScript==
+// @name         link
+// @author       https://github.com/j4ckcyw/link
+// @description  Open all links under selected area in new window
+// @include      *
+// ==/UserScript==
