@@ -4,12 +4,20 @@ let mousedowns = Rx.Observable.fromEvent(document, 'mousedown')
   , mousemoves = Rx.Observable.fromEvent(document, 'mousemove')
   , mouseups = Rx.Observable.fromEvent(document, 'mouseup')
 
-let mousedrags = mousedowns.flatMap(x => mousemoves.map(y => ({
-  left: x.clientX,
-  top: x.clientY,
-  width: y.clientX - x.clientX,
-  height: y.clientY - x.clientY
-})).takeUntil(mouseups))
+let mousedrags = mousedowns.flatMap(x => {
+  return mousemoves.map(y => {
+    y.preventDefault()
+
+    return {
+      left: x.pageX,
+      top: x.pageY,
+      width: y.pageX - x.pageX,
+      height: y.pageY - x.pageY
+    }
+  }).takeUntil(mouseups)
+})
+
+mousedrags.subscribe(e => console.log(e))
 
 // create and append rectangle
 mousedowns.subscribe(_ => {
@@ -49,7 +57,6 @@ mouseups.subscribe(_ => {
   let as = [...document.querySelectorAll('a')]
     .filter(a => overlaps(el, a))
     .map(a => window.open(a))
-    .map(a => console.log(a))
 
   el.remove()
 })
